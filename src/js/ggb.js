@@ -2,23 +2,18 @@ export function loadCodebase(codeBase) {
     ggbApplet.setBase64(codeBase);
 }
 
-export function getCodebase() {
-    return ggbApplet.getBase64();
-}
-
 export function newConstruction() {
     ggbApplet.newConstruction();
 }
 
 export function updateDomain(domain) {
-    ggbApplet.setVisible('domain', true);
+    ggbApplet.setVisible('Domain', true);
     ggbApplet.setValue('a', domain.leftEndpt);
     ggbApplet.setValue('b', domain.rightEndpt);
-    ggbApplet.evalCommand(`domain: a ${domain.leftIneq} x ${domain.rightIneq} b`);
 }
 
 export function domainVisible() {
-    ggbApplet.setVisible('domain', true);
+    ggbApplet.setVisible('Domain', true);
     ggbApplet.setVisible('A', true);
     ggbApplet.setVisible('B', true);
 }
@@ -31,96 +26,17 @@ export function registerUpdateListener(name, callback) {
     ggbApplet.registerObjectUpdateListener(name, callback);
 }
 
-export function updateRange(range) {
-    ggbApplet.setValue('c', range.leftEndpt);
-    ggbApplet.setValue('d', range.rightEndpt);
-    ggbApplet.setVisible('range', true);
-}
-
-export function calcRange(domain) {
-    let leftIneq, rightIneq;
-
-    // handle case that the domain is a single point
-    if (domain.leftEndpt === domain.rightEndpt) {
-        ggbApplet.evalCommand(`temp=f(${domain.leftEndpt})`);
-        const temp = Math.round(100000 * ggbApplet.getValue('temp')) / 100000;
-        return { leftIneq: '<=', 
-                rightIneq: '<=', 
-                leftEndpt: temp, 
-                rightEndpt: temp, 
-                strg: `[${temp}, ${temp}]` 
-            }
-    }
-
-    // otherwise, do all this stuff.
-    // Get upper bound on range
-    ggbApplet.evalCommand(`relMax = Max(f,${domain.leftEndpt},${domain.rightEndpt})`);
-    ggbApplet.setVisible('relMax', false);
-    const relMax = Math.round(100000 * parseFloat(ggbApplet.getYcoord('relMax'))) / 100000;
-    ggbApplet.evalCommand(`rangeMax = Max({f(${domain.leftEndpt}), f(${domain.rightEndpt}), ${relMax}})`);
-    
-    // Get lower bound on range 
-    ggbApplet.evalCommand(`relMin = Min(f,${domain.leftEndpt},${domain.rightEndpt})`);
-    ggbApplet.setVisible('relMin', false);
-    const relMin = Math.round(100000 * parseFloat(ggbApplet.getYcoord('relMin'))) / 100000;
-    ggbApplet.evalCommand(`rangeMin = Min({f(${domain.leftEndpt}), f(${domain.rightEndpt}), ${relMin}})`);
-    
-    // convert strings to numbers and account for rounding error
-    const min =getRoundedValue('rangeMin');
-    const max = getRoundedValue('rangeMax');
-    const f_a = getRoundedValue(`f(${domain.leftEndpt})`);
-    const f_b = getRoundedValue(`f(${domain.rightEndpt})`);
-    
-    //test lower endpoint for inclusion
-    if (min === relMin && min === f_a && f_a !== f_b) {
-        leftIneq = domain.leftIneq;
-    } else if (min === relMin && min === f_b && f_a !== f_b) {
-        leftIneq = domain.rightIneq;
-    } else if (min === relMin && min === f_a && f_a === f_b) {
-        if(domain.leftIneq === domain.rightIneq) {
-            leftIneq = domain.leftIneq;
-        } else {
-            if (domain.leftIneq > domain.rightIneq) {
-                leftIneq = domain.leftIneq;
-            } else {
-                leftIneq = domain.rightIneq;
-            }
-        }
-    } else if (min === f_b) {
-        leftIneq = domain.rightIneq;
-    } else if (min === f_a) {
-        leftIneq = domain.leftIneq;
+export function updateRange(center, radius) {
+    if (center == 4) {
+        ggbApplet.setValue('c', 0);
+    } else if (center == 1) {
+        ggbApplet.setValue('c', 2);
     } else {
-        leftIneq = '<=';
+        ggbApplet.setValue('c', 1);
     }
-    
-    // test upper endpoint for inclusion
-    if (max === relMax && max === f_a && f_a !== f_b) {
-        rightIneq = domain.leftIneq;
-    } else if (max === relMax && max === f_b && f_a !== f_b) {
-        rightIneq = domain.rightIneq;
-    } else if (max === relMax && max === f_a && f_a === f_b) {
-        if(domain.leftIneq === domain.rightIneq) {
-            rightIneq = domain.leftIneq;
-        } else {
-            if (domain.leftIneq > domain.rightIneq) {
-                rightIneq = domain.leftIneq;
-            } else {
-                rightIneq = domain.rightIneq;
-            }
-        }
-    } else if (max === f_b) {
-        rightIneq = domain.rightIneq;
-    } else if (max === f_a) {
-        rightIneq = domain.leftIneq;
-    } else {
-        rightIneq = '<=';
-    }
-
-    const strg = `${leftIneq === '<=' ? '[' : '('}${min}, ${max}${rightIneq === '<=' ? ']' : ')'}`;
-    let leftEndpt = min;
-    let rightEndpt = max;
-    return { leftIneq, rightIneq, leftEndpt, rightEndpt, strg, f_a, f_b };
+    ggbApplet.setValue('L', center);
+    ggbApplet.setValue('Radius', radius);
+    ggbApplet.setVisible('Range', true);
 }
 
 export function getRoundedValue(obj) {

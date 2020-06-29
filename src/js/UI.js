@@ -4,8 +4,9 @@ export const elements = {
     secInput1: document.getElementById('user_inputPart1'),
     pInput1: document.getElementById('p_input1'),
     h3Input1: document.getElementById('h3_input1'),
-    input1: document.getElementById('input1'),
-    submit1: document.getElementById('submit1'),
+    center: document.getElementById('center'),
+    radius: document.getElementById('radius'),
+    submit: document.getElementById('submit'),
     feedback: document.getElementById('feedback'),
     p_feedback: document.getElementById('p_feedback'),
     p_feedbackBtn1: document.getElementById('p_feedbackBtns1'),
@@ -30,6 +31,7 @@ export function getInputValue(id) {
 export function resetDOM() {
     elements.feedback.style.display = 'none';
     elements.secInput1.style.display = 'block';
-    elements.input1.value = '';
-    elements.input1.focus();
+    elements.center.value = '';
+    elements.radius.value = '';
+    elements.center.focus();
 }
