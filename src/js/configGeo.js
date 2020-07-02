@@ -20,6 +20,8 @@ export const parameters = {
     // add code here to run when the applet starts
     "appletOnLoad":function(api){
                                     api.setLayer('F1', 1); 
+                                    api.setCaption('f', '$f(x)$');
+                                    api.setLabelStyle('f', 3);
                                 },
     "showFullscreenButton":false,
     "scale":1,
