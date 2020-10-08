@@ -10,6 +10,7 @@ let ggbApp = new GGBApplet(parameters, '5.0', views);
 function update() {
     const center = getInputValue('center');
     const radius = getInputValue('radius');
+    console.log(center, radius);
     ggb.updateRange(center, radius);
     ggb.domainVisible();
     ggb.pointCapture(1, 0);
