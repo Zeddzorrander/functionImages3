@@ -25,7 +25,7 @@ export function updateFeedbackSection(a, b) {
 }
 
 export function getInputValue(id) {
-    return parseInt(document.getElementById(id).value); 
+    return parseFloat(document.getElementById(id).value); 
 }
 
 export function resetDOM() {
